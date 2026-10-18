@@ -1,4 +1,5 @@
-FROM registry.fedoraproject.org/fedora:44
+# Follow Fedora's latest release; build with --pull to refresh the base image.
+FROM registry.fedoraproject.org/fedora:latest
 
 ARG USERNAME=esp
 ARG UID=1000

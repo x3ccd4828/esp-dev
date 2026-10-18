@@ -37,8 +37,8 @@ BUILD_ARGS = \
 
 help:
 	@printf '%s\n' 'Targets:'
-	@printf '%s\n' '  make build            Build image with cache'
-	@printf '%s\n' '  make build-no-cache   Build image without cache'
+	@printf '%s\n' '  make build            Pull current base and build image with cache'
+	@printf '%s\n' '  make build-no-cache   Pull current base and build image without cache'
 	@printf '%s\n' '  make box-create       Create distrobox from BOX_IMAGE'
 	@printf '%s\n' '  make box-create-local Build image, then create distrobox'
 	@printf '%s\n' '  make box-enter        Enter distrobox shell'
@@ -59,10 +59,10 @@ help:
 	@printf '%s\n' "  BOX_BUILD_USERNAME=$(BOX_BUILD_USERNAME) BOX_BUILD_UID=$(BOX_BUILD_UID) BOX_BUILD_GID=$(BOX_BUILD_GID)"
 
 build:
-	$(ENGINE) build -f $(CONTAINERFILE) -t $(IMAGE_REF) $(BUILD_ARGS) $(CONTEXT)
+	$(ENGINE) build --pull -f $(CONTAINERFILE) -t $(IMAGE_REF) $(BUILD_ARGS) $(CONTEXT)
 
 build-no-cache:
-	$(ENGINE) build --no-cache -f $(CONTAINERFILE) -t $(IMAGE_REF) $(BUILD_ARGS) $(CONTEXT)
+	$(ENGINE) build --pull --no-cache -f $(CONTAINERFILE) -t $(IMAGE_REF) $(BUILD_ARGS) $(CONTEXT)
 
 box-create:
 	distrobox create --name $(BOX_NAME) --image $(BOX_IMAGE) --init-hooks "$(BOX_INIT_HOOKS)" $(if $(strip $(BOX_ENGINE_FLAGS)),--additional-flags "$(BOX_ENGINE_FLAGS)",)
@@ -77,4 +77,6 @@ box-enter:
 box-rm:
 	distrobox rm --force $(BOX_NAME)
 
-box-recreate: box-rm box-create
+box-recreate:
+	$(MAKE) box-rm
+	$(MAKE) box-create
